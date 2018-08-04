@@ -1,0 +1,16 @@
+{
+  extends: ["taller/react"],
+  rules: {
+    no-mixed-operators: 0,
+    import/first: 0,
+    prefer-promise-reject-errors: 0,
+    comma-dangle: [1, 'only-multiline'],
+    react/jsx-curly-spacing: [
+      2,
+      {
+        when: "always",
+        children: true
+      }
+    ]
+  }
+}

@@ -1,0 +1,7 @@
+.next
+build
+node_modules
+temp
+coverage
+gen-icons.js
+tests/react-apollo-compiled
