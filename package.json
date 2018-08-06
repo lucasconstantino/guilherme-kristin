@@ -6,12 +6,14 @@
     "holen": "^2.0.1",
     "js-sha256": "^0.9.0",
     "moment": "^2.22.2",
+    "patch-package": "^5.1.1",
     "react": "^16.4.2",
     "react-adopt": "^0.6.0",
     "react-dates": "^17.1.1",
     "react-dom": "^16.4.2",
     "react-focus-lock": "^1.11.2",
     "react-powerplug": "^1.0.0-rc.1",
+    "react-preload": "^0.5.1",
     "react-reveal": "^1.2.2",
     "react-scripts": "1.1.4",
     "react-transition-group": "^2.4.0",
@@ -23,10 +25,12 @@
     "build": "react-scripts build",
     "test": "react-scripts test --env=jsdom",
     "eject": "react-scripts eject",
-    "deploy": "yarn build; cp CNAME build; cd build; surge ."
+    "deploy": "yarn build; cp CNAME build; cd build; surge .",
+    "postinstall": "patch-package"
   },
   "devDependencies": {
     "eslint-config-taller": "^2.0.0",
+    "postinstall-postinstall": "^1.0.0",
     "surge": "^0.20.1"
   }
 }

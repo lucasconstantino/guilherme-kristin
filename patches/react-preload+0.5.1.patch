@@ -1,0 +1,52 @@
+patch-package
+--- a/node_modules/react-preload/lib/Preload.js
++++ b/node_modules/react-preload/lib/Preload.js
+@@ -10,6 +10,8 @@ var _react = require('react');
+ 
+ var _react2 = _interopRequireDefault(_react);
+ 
++var PropTypes = require('prop-types');
++
+ var _ImageHelper = require('./ImageHelper');
+ 
+ var _ImageHelper2 = _interopRequireDefault(_ImageHelper);
+@@ -24,31 +26,31 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function"
+ 
+ var propTypes = {
+     // Rendered on success
+-    children: _react.PropTypes.element.isRequired,
++    children: PropTypes.element.isRequired,
+ 
+     // Rendered during load
+-    loadingIndicator: _react.PropTypes.node.isRequired,
++    loadingIndicator: PropTypes.node.isRequired,
+ 
+     // Array of image urls to be preloaded
+-    images: _react.PropTypes.array,
++    images: PropTypes.array,
+ 
+     // If set, the preloader will automatically show
+     // the children content after this amount of time
+-    autoResolveDelay: _react.PropTypes.number,
++    autoResolveDelay: PropTypes.number,
+ 
+     // Error callback. Is passed the error
+-    onError: _react.PropTypes.func,
++    onError: PropTypes.func,
+ 
+     // Success callback
+-    onSuccess: _react.PropTypes.func,
++    onSuccess: PropTypes.func,
+ 
+     // Whether or not we should still show the content
+     // even if there is a preloading error
+-    resolveOnError: _react.PropTypes.bool,
++    resolveOnError: PropTypes.bool,
+ 
+     // Whether or not we should mount the child content after
+     // images have finished loading (or after autoResolveDelay)
+-    mountChildren: _react.PropTypes.bool
++    mountChildren: PropTypes.bool
+ };
+ 
+ var defaultProps = {
