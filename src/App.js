@@ -1,13 +1,19 @@
 import React from 'react'
+import { node, func } from 'prop-types'
 import styled, { keyframes } from 'styled-components'
 import { DateRangePicker } from 'react-dates'
 import { State } from 'react-powerplug'
+import Holen from 'holen'
+import { sha256 } from 'js-sha256'
+import moment from 'moment'
+import FocusLock from 'react-focus-lock'
 
 import 'react-dates/initialize'
 import 'react-dates/lib/css/_datepicker.css'
 
-import backgroundImage from './background.jpg'
+import backgroundImage from './background2.jpg'
 import airplane from './airplane.svg'
+import heart from './heart.png'
 
 const Page = styled.div`
   height: 100vh;
@@ -16,10 +22,12 @@ const Page = styled.div`
   background-position: top right;
   background-size: cover;
   background-image: url("${backgroundImage}");
+  overflow: auto;
 `
 
 const Title = styled.h1`
   margin: 0;
+  text-indent: -4px;
   font-size: 4em;
   font-family: 'Cardo', serif;
 `
@@ -40,17 +48,26 @@ const Flag = styled.img`
 `
 
 const Text = styled.p`
-  font-size: 1.2em;
   font-family: 'Cardo', serif;
+  max-width: 32em;
+
+  ${({ big }) =>
+    big &&
+    `
+    font-size: 1.2em;
+    font-weight: bold;
+  `};
 `
 
-const Form = styled.form`
+const Form = styled.div`
+  margin-bottom: 2em;
+
   .DateRangePicker {
     vertical-align: middle;
   }
 
   .DateInput_input {
-    font-size: 1.2em;
+    font-size: 1em;
     font-family: 'Cardo', serif;
   }
 `
@@ -73,6 +90,27 @@ const shake = keyframes`
   }
 `
 
+const Link = styled.a`
+  color: #c63616;
+  text-decoration: none;
+
+  &:hover,
+  &:focus {
+    text-decoration: underline;
+  }
+`
+
+const Field = styled.div`
+  display: inline-block;
+  width: 10em;
+  margin-left: 1em;
+  border: 1px solid #dbdbdb;
+  border-radius: 2px;
+  vertical-align: middle;
+`
+
+const Input = styled.input``
+
 const Button = styled.button`
   position: relative;
   padding: 0.4em 2em 0.45em;
@@ -80,21 +118,21 @@ const Button = styled.button`
   border: 0;
   color: white;
   font-weight: bold;
-  font-size: 1.2em;
+  font-size: 1em;
   font-family: 'Cardo', serif;
   vertical-align: middle;
   overflow: hidden;
   transition: 200ms ease-in-out;
   outline: transparent;
+  background-color: #ffc6bc;
 
   &[disabled] {
-    background-color: #646464;
+    filter: grayscale(0);
     opacity: 0.2;
   }
 
   &:not([disabled]) {
     cursor: pointer;
-    background-color: #ffc6bc;
 
     &:hover {
       background-color: #ffb5a8;
@@ -107,13 +145,13 @@ const Button = styled.button`
     position: absolute;
     left: -80px;
     top: 5px;
-    width: 40px;
-    height: 50px;
+    width: 32px;
+    height: 40px;
     background-image: url(${airplane});
     transition: left 200ms ease-in-out;
 
     transform: translate3d(0, 0, 0) rotate(0deg);
-    animation: ${shake} 7s ease-in-out infinite;
+    animation: ${shake} 5s ease-in-out infinite;
     backface-visibility: hidden;
     perspective: 1000px;
   }
@@ -135,56 +173,279 @@ const Button = styled.button`
   `};
 `
 
+const Credits = styled.span`
+  position: fixed;
+  font-size: 0.7em;
+  right: 1em;
+  bottom: 1em;
+  filter: grayscale(100%);
+  transition: filter 200ms ease-in-out;
+  cursor: default;
+
+  &:hover {
+    filter: grayscale(0);
+  }
+`
+
+const beat = keyframes`
+  to {
+    transform: scale(1.2);
+  }
+`
+
+const Love = styled.img`
+  vertical-align: sub;
+
+  ${Credits}:hover & {
+    animation: ${beat} 0.3s infinite alternate;
+  }
+`
+
+const ModalOverlay = styled.div`
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(255, 200, 200, 0.4);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+`
+
+const ModalContent = styled.div`
+  padding: 2rem 3rem;
+  background-color: white;
+  position: relative;
+  z-index: 10;
+`
+
+const ModalClose = styled.button`
+  content: 'x';
+  background: transparent;
+  border: none;
+  font-weight: bold;
+  font-size: 1.5em;
+  font-family: 'Montserrat', sans-serif;
+  color: white;
+  position: fixed;
+  top: 0.5em;
+  right: 1em;
+  cursor: pointer;
+  display: block;
+  outline: none;
+`
+
+const ModalCloser = styled.div`
+  position: fixed;
+  top: 0;
+  right: 0;
+  left: 0;
+  bottom: 0;
+`
+
+const Modal = ({ children, onClose = () => {} }) => (
+  <ModalOverlay>
+    <FocusLock>
+      <ModalCloser onClick={ onClose } />
+      <ModalContent>
+        { onClose && <ModalClose onClick={ onClose }>x</ModalClose> }
+        { children }
+      </ModalContent>
+    </FocusLock>
+  </ModalOverlay>
+)
+
+Modal.propTypes = {
+  children: node,
+  onClose: func,
+}
+
 const initialState = {
   startDate: null,
   endDate: null,
   focusedInput: null,
   submitting: false,
+  editing: false,
+  secret: '',
+  error: null,
+  showError: null,
+  scheduled: false,
+  showSuccess: false,
 }
 
+const storage =
+  'https://wt-1cda89f1fbe853160953a0bb5aabe5f5-0.sandbox.auth0-extend.com/kristin-guilherme'
+
+const secretHash =
+  '7e4c0d012bd90cad2c93096c6b94f51e7249fa2410729adae4ca6a09689ad21d'
+
+const CouldNotScheduleError = 'Could not schedule! Please, try again later :('
+
 export default () => (
-  <State initial={ initialState }>
-    { ({
-      state: { startDate, endDate, focusedInput, submitting },
-      setState,
-    }) => (
-      <Page>
-        <header>
-          <Title>Kristin & Guilherme</Title>
-          <Subtitle>
-            You are comming to
-            <Flag src='https://www.shareicon.net/data/144x144/2016/08/04/806847_flag_512x512.png' />{ ' ' }
-          </Subtitle>
-        </header>
-        <Text>Choose the dates below:</Text>
+  <Holen url={ storage }>
+    { ({ fetching, data, error }) =>
+      fetching ? null : (
+        <State initial={ { ...initialState, ...data.data } }>
+          { ({
+            state: {
+              startDate,
+              endDate,
+              focusedInput,
+              secret,
+              editing,
+              showError,
+              error,
+              scheduled,
+              showSuccess,
+            },
+            setState,
+          }) => (
+            <Holen
+              lazy
+              url={ storage }
+              method='POST'
+              headers={ { 'content-type': 'application/json' } }
+              onResponse={ (err, { status, data = {} }) => {
+                setState(
+                  err || status !== 200
+                    ? {
+                      showError: true,
+                      error: data.error || CouldNotScheduleError,
+                    }
+                    : {
+                      showSuccess: true,
+                      scheduled: true,
+                      editing: false,
+                    }
+                )
+              } }
+            >
+              { ({ fetching: submitting, fetch: schedule }) => (
+                <Page>
+                  { showError && (
+                    <Modal onClose={ () => setState({ showError: false }) }>
+                      <h3>Ops!</h3>
+                      <p>{ error }</p>
+                    </Modal>
+                  ) }
+                  { showSuccess && (
+                    <Modal onClose={ () => setState({ showSuccess: false }) }>
+                      <h3>Woohoo!</h3>
+                      <p>Thanks for letting us know!</p>
+                      <p>
+                        We'll get back to you as soon as we have your flight
+                        details ;)
+                      </p>
+                    </Modal>
+                  ) }
+                  <header>
+                    <Title>Kristin & Guilherme</Title>
+                    <Subtitle>
+                      You are coming to
+                      <Flag src='https://www.shareicon.net/data/144x144/2016/08/04/806847_flag_512x512.png' />{ ' ' }
+                    </Subtitle>
+                  </header>
+                  { scheduled &&
+                    !editing && (
+                    <Text>
+                        We are expecting you here{ ' ' }
+                      <i
+                        title={ `From ${moment(startDate).format(
+                          'dddd, MMMM Do YYYY'
+                        )} to ${moment(endDate).format(
+                          'dddd, MMMM Do YYYY'
+                        )}` }
+                      >
+                        { moment(startDate).fromNow() }!
+                      </i>
+                      <br />If you change you plans, please{ ' ' }
+                      <Link
+                        href='#'
+                        onClick={ () => setState({ editing: true }) }
+                      >
+                          let us now.
+                      </Link>
+                    </Text>
+                  ) }
 
-        <Form
-          onSubmit={ e => {
-            e.preventDefault()
-            setState({ submitting: true })
-          } }
-        >
-          <DateRangePicker
-            startDate={ startDate }
-            startDateId='start'
-            startDatePlaceholderText='Depart'
-            endDate={ endDate }
-            endDateId='end'
-            endDatePlaceholderText='Return'
-            onDatesChange={ setState }
-            focusedInput={ focusedInput }
-            onFocusChange={ focusedInput => setState({ focusedInput }) }
-            withPortal
-            hideKeyboardShortcutsPanel
-          />
+                  { !scheduled || editing ? (
+                    <div>
+                      <Text big>Please, choose the dates below:</Text>
 
-          <Button submitting={ submitting } disabled={ false }>
-            <span>Schedule</span>
-          </Button>
+                      <Form>
+                        <DateRangePicker
+                          startDate={ moment(startDate) }
+                          startDateId='start'
+                          startDatePlaceholderText='Depart'
+                          endDate={ moment(endDate) }
+                          endDateId='end'
+                          endDatePlaceholderText='Return'
+                          onDatesChange={ setState }
+                          focusedInput={ focusedInput }
+                          onFocusChange={ focusedInput =>
+                            setState({ focusedInput })
+                          }
+                          withPortal
+                          hideKeyboardShortcutsPanel
+                        />
 
-          <pre>{ JSON.stringify({ startDate, endDate }, null, 2) }</pre>
-        </Form>
-      </Page>
-    ) }
-  </State>
+                        <Field>
+                          <Input
+                            type='text'
+                            name='secret'
+                            placeholder='Secret code'
+                            className='DateInput_input'
+                            value={ secret }
+                            onChange={ e => setState({ secret: e.target.value }) }
+                          />
+                        </Field>
+
+                        <Button
+                          submitting={ submitting }
+                          disabled={
+                            !startDate || !endDate || false
+                            // sha256(secret) !== secretHash
+                          }
+                          onClick={ () =>
+                            schedule({
+                              body: JSON.stringify({
+                                startDate,
+                                endDate,
+                                secret,
+                              }),
+                            })
+                          }
+                        >
+                          <span>Let us know</span>
+                        </Button>
+                      </Form>
+                    </div>
+                  ) : null }
+                  <Text>
+                    This was made possible by the help of many of your friends
+                    in Brazil. As most of us could not attend the wedding, we
+                    agreed that the best gift we could give you both was the
+                    opportunity to beat the distance once again and share with
+                    us a part of this moment.
+                  </Text>
+                  <Text big>We are looking forward to welcome you!</Text>
+                  <Credits>
+                    Made with <Love src={ heart } alt='love' /> by the{ ' ' }
+                    <Link
+                      href='https://www.facebook.com/lucasconstantino'
+                      target='_blank'
+                    >
+                      Best Man
+                    </Link>
+                  </Credits>
+                </Page>
+              ) }
+            </Holen>
+          ) }
+        </State>
+      )
+    }
+  </Holen>
 )
