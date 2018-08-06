@@ -376,10 +376,10 @@ export default () => (
 
                       <Form>
                         <DateRangePicker
-                          startDate={ moment(startDate) }
+                          startDate={ startDate && moment(startDate) }
                           startDateId='start'
                           startDatePlaceholderText='Depart'
-                          endDate={ moment(endDate) }
+                          endDate={ endDate && moment(endDate) }
                           endDateId='end'
                           endDatePlaceholderText='Return'
                           onDatesChange={ setState }
