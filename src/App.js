@@ -1,5 +1,5 @@
+/* eslint-disable react/prop-types */
 import React from 'react'
-import { node, func } from 'prop-types'
 import styled, { keyframes } from 'styled-components'
 import { DateRangePicker } from 'react-dates'
 import { State } from 'react-powerplug'
@@ -14,6 +14,8 @@ import 'react-dates/lib/css/_datepicker.css'
 import backgroundImage from './background2.jpg'
 import airplane from './airplane.svg'
 import heart from './heart.png'
+
+import members from './members'
 
 const Page = styled.div`
   height: 100vh;
@@ -208,17 +210,20 @@ const ModalOverlay = styled.div`
   right: 0;
   bottom: 0;
   background-color: rgba(255, 200, 200, 0.4);
-  display: flex;
-  justify-content: center;
-  align-items: center;
   z-index: 1000;
+  overflow: auto;
+  padding: 3rem 4rem;
+  text-align: center;
 `
 
 const ModalContent = styled.div`
+  max-width: 38rem;
   padding: 2rem 3rem;
   background-color: white;
   position: relative;
   z-index: 10;
+  display: inline-block;
+  text-align: center;
 `
 
 const ModalClose = styled.button`
@@ -237,30 +242,16 @@ const ModalClose = styled.button`
   outline: none;
 `
 
-const ModalCloser = styled.div`
-  position: fixed;
-  top: 0;
-  right: 0;
-  left: 0;
-  bottom: 0;
-`
-
 const Modal = ({ children, onClose = () => {} }) => (
-  <ModalOverlay>
+  <ModalOverlay onClick={ onClose }>
     <FocusLock>
-      <ModalCloser onClick={ onClose } />
-      <ModalContent>
+      <ModalContent onClick={ e => e.stopPropagation() }>
         { onClose && <ModalClose onClick={ onClose }>x</ModalClose> }
         { children }
       </ModalContent>
     </FocusLock>
   </ModalOverlay>
 )
-
-Modal.propTypes = {
-  children: node,
-  onClose: func,
-}
 
 const initialState = {
   startDate: null,
@@ -273,6 +264,7 @@ const initialState = {
   showError: null,
   scheduled: false,
   showSuccess: false,
+  showMembers: false,
 }
 
 const storage =
@@ -299,6 +291,7 @@ export default () => (
               error,
               scheduled,
               showSuccess,
+              showMembers,
             },
             setState,
           }) => (
@@ -338,6 +331,11 @@ export default () => (
                         We'll get back to you as soon as we have your flight
                         details ;)
                       </p>
+                    </Modal>
+                  ) }
+                  { showMembers && (
+                    <Modal onClose={ () => setState({ showMembers: false }) }>
+                      <Members />
                     </Modal>
                   ) }
                   <header>
@@ -405,8 +403,9 @@ export default () => (
                         <Button
                           submitting={ submitting }
                           disabled={
-                            !startDate || !endDate || false
-                            // sha256(secret) !== secretHash
+                            !startDate ||
+                            !endDate ||
+                            sha256(secret) !== secretHash
                           }
                           onClick={ () =>
                             schedule({
@@ -424,7 +423,13 @@ export default () => (
                     </div>
                   ) : null }
                   <Text>
-                    This was made possible by the help of many of your friends
+                    This was made possible by the help of{ ' ' }
+                    <Link
+                      href='#'
+                      onClick={ () => setState({ showMembers: true }) }
+                    >
+                      many of your friends
+                    </Link>{ ' ' }
                     in Brazil. As most of us could not attend the wedding, we
                     agreed that the best gift we could give you both was the
                     opportunity to beat the distance once again and share with
@@ -448,4 +453,84 @@ export default () => (
       )
     }
   </Holen>
+)
+
+const Avatar = styled.a`
+  display: block;
+  width: 140px;
+  color: inherit;
+  text-decoration: none;
+
+  h4 {
+    margin: 0;
+    font-size: 0.8em;
+    text-align: center;
+    font-weight: normal;
+  }
+
+  &:hover,
+  &:focus {
+    text-decoration: underline;
+  }
+`
+
+const PhotoWrapper = styled.div`
+  padding: 1em 1em 0.25em 1em;
+
+  > div {
+    position: relative;
+    padding-top: 100%;
+  }
+`
+
+const Photo = styled.img`
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 50%;
+  padding: 2px;
+  border: 3px dashed #ffc6bc;
+`
+
+const Member = ({ name, url, photo }) => (
+  <Avatar href={ url } target='_blank'>
+    <PhotoWrapper>
+      <div>
+        <Photo src={ photo } alt={ url } title={ name } />
+      </div>
+    </PhotoWrapper>
+    <h4>{ name }</h4>
+  </Avatar>
+)
+
+const StyledMembers = styled.div`
+  ul {
+    display: block;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  li {
+    display: inline-block;
+    margin: 0 0.25em 0.25em 0.25em;
+  }
+`
+
+const Members = () => (
+  <StyledMembers>
+    <Text big>These people helped you come to Brazil:</Text>
+    <ul>
+      { members.map(member => (
+        <li key={ member.name }>
+          <Member { ...member } />
+        </li>
+      )) }
+    </ul>
+  </StyledMembers>
 )
