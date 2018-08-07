@@ -55,7 +55,7 @@ const Flag = styled.img`
 
 const Text = styled.p`
   font-family: 'Cardo', serif;
-  max-width: 32em;
+  max-width: 32rem;
 
   ${({ big }) =>
     big &&
@@ -279,193 +279,226 @@ const secretHash =
 
 const CouldNotScheduleError = 'Could not schedule! Please, try again later :('
 
+const Mobile = styled.div`
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  text-align: center;
+  overflow: auto;
+  background: white;
+  z-index: 2000;
+  flex-direction: column;
+  justify-content: center;
+  padding: 2rem 3rem 5rem 3rem;
+
+  @media (max-width: 880px) {
+    display: flex;
+  }
+
+  ${Text} {
+    max-width: none;
+  }
+`
+
 export default () => (
-  <Preload
-    images={ images }
-    autoResolveDelay={ 10000 }
-    resolveOnError
-    mountChildren
-  >
-    <Holen url={ storage }>
-      { ({ fetching, data, error }) =>
-        fetching ? null : (
-          <State initial={ { ...initialState, ...data.data } }>
-            { ({
-              state: {
-                startDate,
-                endDate,
-                focusedInput,
-                secret,
-                editing,
-                showError,
-                error,
-                scheduled,
-                showSuccess,
-                showMembers,
-              },
-              setState,
-            }) => (
-              <Holen
-                lazy
-                url={ storage }
-                method='POST'
-                headers={ { 'content-type': 'application/json' } }
-                onResponse={ (err, { status, data = {} }) => {
-                  setState(
-                    err || status !== 200
-                      ? {
-                        showError: true,
-                        error: data.error || CouldNotScheduleError,
-                      }
-                      : {
-                        showSuccess: true,
-                        scheduled: true,
-                        editing: false,
-                      }
-                  )
-                } }
-              >
-                { ({ fetching: submitting, fetch: schedule }) => (
-                  <Page>
-                    { showError && (
-                      <Modal onClose={ () => setState({ showError: false }) }>
-                        <h3>Ops!</h3>
-                        <p>{ error }</p>
-                      </Modal>
-                    ) }
-                    { showSuccess && (
-                      <Modal onClose={ () => setState({ showSuccess: false }) }>
-                        <h3>Woohoo!</h3>
-                        <p>Thanks for letting us know!</p>
-                        <p>
-                          We'll get back to you as soon as we have your flight
-                          details ;)
-                        </p>
-                      </Modal>
-                    ) }
-                    { showMembers && (
-                      <Modal onClose={ () => setState({ showMembers: false }) }>
-                        <Members />
-                      </Modal>
-                    ) }
-                    <header>
-                      <Title>Kristin & Guilherme</Title>
-                      <Subtitle>
-                        You are coming to
-                        <Flag src='https://www.shareicon.net/data/144x144/2016/08/04/806847_flag_512x512.png' />{ ' ' }
-                      </Subtitle>
-                    </header>
-                    { scheduled &&
-                      !editing && (
+  <div>
+    <Mobile>
+      <Text big>Do you mind opening this website on a big screen later?</Text>
+      <Text>
+        It will sure be a better experience than on this small sized device ;)
+      </Text>
+    </Mobile>
+
+    <Preload
+      images={ images }
+      autoResolveDelay={ 10000 }
+      resolveOnError
+      mountChildren
+    >
+      <Holen url={ storage }>
+        { ({ fetching, data, error }) =>
+          fetching ? null : (
+            <State initial={ { ...initialState, ...data.data } }>
+              { ({
+                state: {
+                  startDate,
+                  endDate,
+                  focusedInput,
+                  secret,
+                  editing,
+                  showError,
+                  error,
+                  scheduled,
+                  showSuccess,
+                  showMembers,
+                },
+                setState,
+              }) => (
+                <Holen
+                  lazy
+                  url={ storage }
+                  method='POST'
+                  headers={ { 'content-type': 'application/json' } }
+                  onResponse={ (err, { status, data = {} }) => {
+                    setState(
+                      err || status !== 200
+                        ? {
+                          showError: true,
+                          error: data.error || CouldNotScheduleError,
+                        }
+                        : {
+                          showSuccess: true,
+                          scheduled: true,
+                          editing: false,
+                        }
+                    )
+                  } }
+                >
+                  { ({ fetching: submitting, fetch: schedule }) => (
+                    <Page>
+                      { showError && (
+                        <Modal onClose={ () => setState({ showError: false }) }>
+                          <h3>Ops!</h3>
+                          <p>{ error }</p>
+                        </Modal>
+                      ) }
+                      { showSuccess && (
+                        <Modal onClose={ () => setState({ showSuccess: false }) }>
+                          <h3>Woohoo!</h3>
+                          <p>Thanks for letting us know!</p>
+                          <p>
+                            We'll get back to you as soon as we have your flight
+                            details ;)
+                          </p>
+                        </Modal>
+                      ) }
+                      { showMembers && (
+                        <Modal onClose={ () => setState({ showMembers: false }) }>
+                          <Members />
+                        </Modal>
+                      ) }
+                      <header>
+                        <Title>Kristin & Guilherme</Title>
+                        <Subtitle>
+                          You are coming to
+                          <Flag src='https://www.shareicon.net/data/144x144/2016/08/04/806847_flag_512x512.png' />{ ' ' }
+                        </Subtitle>
+                      </header>
+                      { scheduled &&
+                        !editing && (
+                        <Text>
+                            We are expecting you here{ ' ' }
+                          <i
+                            title={ `From ${moment(startDate).format(
+                              'dddd, MMMM Do YYYY'
+                            )} to ${moment(endDate).format(
+                              'dddd, MMMM Do YYYY'
+                            )}` }
+                          >
+                            { moment(startDate).fromNow() }!
+                          </i>
+                          <br />If you change you plans, please{ ' ' }
+                          <Link
+                            href='#'
+                            onClick={ () => setState({ editing: true }) }
+                          >
+                              let us now.
+                          </Link>
+                        </Text>
+                      ) }
+
+                      { !scheduled || editing ? (
+                        <div>
+                          <Text big>Please, choose the dates below:</Text>
+
+                          <Form>
+                            <DateRangePicker
+                              startDate={ startDate && moment(startDate) }
+                              startDateId='start'
+                              startDatePlaceholderText='Depart'
+                              endDate={ endDate && moment(endDate) }
+                              endDateId='end'
+                              endDatePlaceholderText='Return'
+                              onDatesChange={ setState }
+                              focusedInput={ focusedInput }
+                              onFocusChange={ focusedInput =>
+                                setState({ focusedInput })
+                              }
+                              withPortal
+                              hideKeyboardShortcutsPanel
+                            />
+
+                            <Field>
+                              <Input
+                                type='text'
+                                name='secret'
+                                placeholder='Secret code'
+                                className='DateInput_input'
+                                value={ secret }
+                                onChange={ e =>
+                                  setState({ secret: e.target.value })
+                                }
+                              />
+                            </Field>
+
+                            <Button
+                              submitting={ submitting }
+                              disabled={
+                                !startDate ||
+                                !endDate ||
+                                sha256(secret) !== secretHash
+                              }
+                              onClick={ () =>
+                                schedule({
+                                  body: JSON.stringify({
+                                    startDate,
+                                    endDate,
+                                    secret,
+                                  }),
+                                })
+                              }
+                            >
+                              <span>Let us know</span>
+                            </Button>
+                          </Form>
+                        </div>
+                      ) : null }
                       <Text>
-                          We are expecting you here{ ' ' }
-                        <i
-                          title={ `From ${moment(startDate).format(
-                            'dddd, MMMM Do YYYY'
-                          )} to ${moment(endDate).format(
-                            'dddd, MMMM Do YYYY'
-                          )}` }
-                        >
-                          { moment(startDate).fromNow() }!
-                        </i>
-                        <br />If you change you plans, please{ ' ' }
+                        This was made possible by the help of{ ' ' }
                         <Link
                           href='#'
-                          onClick={ () => setState({ editing: true }) }
+                          onClick={ () => setState({ showMembers: true }) }
                         >
-                            let us now.
-                        </Link>
+                          many of your friends
+                        </Link>{ ' ' }
+                        in Brazil. As most of us could not attend the wedding,
+                        we agreed that the best gift we could give you both was
+                        the opportunity to beat the distance once again and
+                        share with us a part of this moment.
                       </Text>
-                    ) }
-
-                    { !scheduled || editing ? (
-                      <div>
-                        <Text big>Please, choose the dates below:</Text>
-
-                        <Form>
-                          <DateRangePicker
-                            startDate={ startDate && moment(startDate) }
-                            startDateId='start'
-                            startDatePlaceholderText='Depart'
-                            endDate={ endDate && moment(endDate) }
-                            endDateId='end'
-                            endDatePlaceholderText='Return'
-                            onDatesChange={ setState }
-                            focusedInput={ focusedInput }
-                            onFocusChange={ focusedInput =>
-                              setState({ focusedInput })
-                            }
-                            withPortal
-                            hideKeyboardShortcutsPanel
-                          />
-
-                          <Field>
-                            <Input
-                              type='text'
-                              name='secret'
-                              placeholder='Secret code'
-                              className='DateInput_input'
-                              value={ secret }
-                              onChange={ e =>
-                                setState({ secret: e.target.value })
-                              }
-                            />
-                          </Field>
-
-                          <Button
-                            submitting={ submitting }
-                            disabled={
-                              !startDate ||
-                              !endDate ||
-                              sha256(secret) !== secretHash
-                            }
-                            onClick={ () =>
-                              schedule({
-                                body: JSON.stringify({
-                                  startDate,
-                                  endDate,
-                                  secret,
-                                }),
-                              })
-                            }
-                          >
-                            <span>Let us know</span>
-                          </Button>
-                        </Form>
-                      </div>
-                    ) : null }
-                    <Text>
-                      This was made possible by the help of{ ' ' }
-                      <Link
-                        href='#'
-                        onClick={ () => setState({ showMembers: true }) }
-                      >
-                        many of your friends
-                      </Link>{ ' ' }
-                      in Brazil. As most of us could not attend the wedding, we
-                      agreed that the best gift we could give you both was the
-                      opportunity to beat the distance once again and share with
-                      us a part of this moment.
-                    </Text>
-                    <Text big>We are looking forward to welcome you!</Text>
-                    <Credits>
-                      Made with <Love src={ heart } alt='love' /> by the{ ' ' }
-                      <Link
-                        href='https://www.facebook.com/lucasconstantino'
-                        target='_blank'
-                      >
-                        Best Man
-                      </Link>
-                    </Credits>
-                  </Page>
-                ) }
-              </Holen>
-            ) }
-          </State>
-        )
-      }
-    </Holen>
-  </Preload>
+                      <Text big>We are looking forward to welcome you!</Text>
+                      <Credits>
+                        Made with <Love src={ heart } alt='love' /> by the{ ' ' }
+                        <Link
+                          href='https://www.facebook.com/lucasconstantino'
+                          target='_blank'
+                        >
+                          Best Man
+                        </Link>
+                      </Credits>
+                    </Page>
+                  ) }
+                </Holen>
+              ) }
+            </State>
+          )
+        }
+      </Holen>
+    </Preload>
+  </div>
 )
 
 const Avatar = styled.a`
