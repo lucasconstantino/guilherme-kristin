@@ -8,6 +8,7 @@ import { sha256 } from 'js-sha256'
 import moment from 'moment'
 import FocusLock from 'react-focus-lock'
 import { Preload } from 'react-preload'
+import KeyHandler, { KEYDOWN } from 'react-key-handler'
 
 import 'react-dates/initialize'
 import 'react-dates/lib/css/_datepicker.css'
@@ -215,19 +216,38 @@ const ModalOverlay = styled.div`
   bottom: 0;
   background-color: rgba(255, 200, 200, 0.4);
   z-index: 1000;
-  overflow: auto;
+  overflow: none;
   padding: 3rem 4rem;
   text-align: center;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 250ms;
+
+  ${({ show }) =>
+    show &&
+    `
+    opacity: 1;
+    pointer-events: initial;
+    overflow: auto;
+  `};
 `
 
 const ModalContent = styled.div`
-  max-width: 38rem;
+  max-width: 44rem;
   padding: 2rem 3rem;
   background-color: white;
   position: relative;
   z-index: 10;
   display: inline-block;
   text-align: center;
+  transform: translate3d(0, 20vh, 0);
+  transition: transform 250ms;
+
+  ${({ show }) =>
+    show &&
+    `
+    transform: translate3d(0, 0, 0);
+  `};
 `
 
 const ModalClose = styled.button`
@@ -246,10 +266,20 @@ const ModalClose = styled.button`
   outline: none;
 `
 
-const Modal = ({ children, onClose = () => {} }) => (
-  <ModalOverlay onClick={ onClose }>
+const Modal = ({ children, show, onClose = () => {} }) => (
+  <ModalOverlay show={ show } onClick={ onClose }>
     <FocusLock>
-      <ModalContent onClick={ e => e.stopPropagation() }>
+      <KeyHandler
+        keyEventName={ KEYDOWN }
+        keyValue='Escape'
+        onKeyHandle={ e => {
+          e.preventDefault()
+          e.stopPropagation()
+          onClose()
+        } }
+      />
+
+      <ModalContent show={ show } onClick={ e => e.stopPropagation() }>
         { onClose && <ModalClose onClick={ onClose }>x</ModalClose> }
         { children }
       </ModalContent>
@@ -375,11 +405,12 @@ export default () => (
                           </p>
                         </Modal>
                       ) }
-                      { showMembers && (
-                        <Modal onClose={ () => setState({ showMembers: false }) }>
-                          <Members />
-                        </Modal>
-                      ) }
+                      <Modal
+                        show={ showMembers }
+                        onClose={ () => setState({ showMembers: false }) }
+                      >
+                        <Members />
+                      </Modal>
                       <header>
                         <Title>Kristin & Guilherme</Title>
                         <Subtitle>
@@ -400,7 +431,8 @@ export default () => (
                           >
                             { moment(startDate).fromNow() }!
                           </i>
-                          <br />If you change you plans, please{ ' ' }
+                          <br />
+                            If you change you plans, please{ ' ' }
                           <Link
                             href='#'
                             onClick={ () => setState({ editing: true }) }
@@ -514,10 +546,14 @@ const Avatar = styled.a`
     font-weight: normal;
   }
 
-  &:hover,
-  &:focus {
-    text-decoration: underline;
-  }
+  ${({ href }) =>
+    !!href &&
+    `
+    &:hover,
+    &:focus {
+      text-decoration: underline;
+    }
+  `};
 `
 
 const PhotoWrapper = styled.div`
@@ -565,12 +601,13 @@ const StyledMembers = styled.div`
   li {
     display: inline-block;
     margin: 0 0.25em 0.25em 0.25em;
+    vertical-align: top;
   }
 `
 
 const Members = () => (
   <StyledMembers>
-    <Text big>These people helped you come to Brazil:</Text>
+    <Text big>These people are helping you come to Brazil:</Text>
     <ul>
       { members.map(member => (
         <li key={ member.name }>

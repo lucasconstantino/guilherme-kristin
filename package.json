@@ -12,6 +12,7 @@
     "react-dates": "^17.1.1",
     "react-dom": "^16.4.2",
     "react-focus-lock": "^1.11.2",
+    "react-key-handler": "^1.1.0",
     "react-powerplug": "^1.0.0-rc.1",
     "react-preload": "^0.5.1",
     "react-reveal": "^1.2.2",
