@@ -1,68 +1,71 @@
 export default [
   {
-    name: 'Kariny Melo Candido',
-    url: 'https://www.facebook.com/kariny.candido',
-    photo:
-      'https://scontent.ffln1-1.fna.fbcdn.net/v/t1.0-1/p240x240/21687972_1683208655043635_3782995550842626819_n.jpg?_nc_cat=0&oh=9a0cdb167063cc0af34904f802e155fd&oe=5C08BB57',
+    name: 'Ana Koepp',
+    url: 'https://www.facebook.com/ana.koepp',
+    photo: require('./photos/ana koepp.jpg'),
   },
   {
-    name: 'Kariny Melo Candido',
-    url: 'https://www.facebook.com/kariny.candido',
-    photo:
-      'https://scontent.ffln1-1.fna.fbcdn.net/v/t1.0-1/p240x240/21687972_1683208655043635_3782995550842626819_n.jpg?_nc_cat=0&oh=9a0cdb167063cc0af34904f802e155fd&oe=5C08BB57',
+    name: 'Ana Paula Willeman',
+    url: 'https://www.facebook.com/awillemann',
+    photo: require('./photos/ana paula.jpg'),
   },
   {
-    name: 'Kariny Melo Candido',
-    url: 'https://www.facebook.com/kariny.candido',
-    photo:
-      'https://scontent.ffln1-1.fna.fbcdn.net/v/t1.0-1/p240x240/21687972_1683208655043635_3782995550842626819_n.jpg?_nc_cat=0&oh=9a0cdb167063cc0af34904f802e155fd&oe=5C08BB57',
+    name: 'Elizabet Constantino',
+    url: 'https://www.facebook.com/elizabet.constantino',
+    photo: require('./photos/elizabet.jpg'),
   },
   {
-    name: 'Kariny Melo Candido',
-    url: 'https://www.facebook.com/kariny.candido',
-    photo:
-      'https://scontent.ffln1-1.fna.fbcdn.net/v/t1.0-1/p240x240/21687972_1683208655043635_3782995550842626819_n.jpg?_nc_cat=0&oh=9a0cdb167063cc0af34904f802e155fd&oe=5C08BB57',
+    name: 'Felipe Schröder Clasen',
+    url: 'https://www.facebook.com/felipe.s.clasen',
+    photo: require('./photos/felipe.jpg'),
   },
   {
-    name: 'Kariny Melo Candido',
-    url: 'https://www.facebook.com/kariny.candido',
-    photo:
-      'https://scontent.ffln1-1.fna.fbcdn.net/v/t1.0-1/p240x240/21687972_1683208655043635_3782995550842626819_n.jpg?_nc_cat=0&oh=9a0cdb167063cc0af34904f802e155fd&oe=5C08BB57',
+    name: 'Gueta',
+    photo: require('./photos/gueta.jpg'),
   },
   {
-    name: 'Kariny Melo Candido',
-    url: 'https://www.facebook.com/kariny.candido',
-    photo:
-      'https://scontent.ffln1-1.fna.fbcdn.net/v/t1.0-1/p240x240/21687972_1683208655043635_3782995550842626819_n.jpg?_nc_cat=0&oh=9a0cdb167063cc0af34904f802e155fd&oe=5C08BB57',
+    name: 'Guilherme Constantino Silva',
+    url: 'https://www.facebook.com/GuilhermeConstantinoSilva',
+    photo: require('./photos/guilherme.jpg'),
   },
   {
-    name: 'Kariny Melo Candido',
-    url: 'https://www.facebook.com/kariny.candido',
-    photo:
-      'https://scontent.ffln1-1.fna.fbcdn.net/v/t1.0-1/p240x240/21687972_1683208655043635_3782995550842626819_n.jpg?_nc_cat=0&oh=9a0cdb167063cc0af34904f802e155fd&oe=5C08BB57',
+    name: 'Jéssica Moser de Aguiar',
+    url: 'https://www.facebook.com/jessica.moser.5076',
+    photo: require('./photos/jessica.jpg'),
   },
   {
-    name: 'Kariny Melo Candido',
+    name: 'Kariny Melo Cândido',
     url: 'https://www.facebook.com/kariny.candido',
-    photo:
-      'https://scontent.ffln1-1.fna.fbcdn.net/v/t1.0-1/p240x240/21687972_1683208655043635_3782995550842626819_n.jpg?_nc_cat=0&oh=9a0cdb167063cc0af34904f802e155fd&oe=5C08BB57',
+    photo: require('./photos/kariny.jpg'),
   },
   {
-    name: 'Kariny Melo Candido',
-    url: 'https://www.facebook.com/kariny.candido',
-    photo:
-      'https://scontent.ffln1-1.fna.fbcdn.net/v/t1.0-1/p240x240/21687972_1683208655043635_3782995550842626819_n.jpg?_nc_cat=0&oh=9a0cdb167063cc0af34904f802e155fd&oe=5C08BB57',
+    name: 'Lucas Constantino Silva',
+    url: 'https://www.facebook.com/lucasconstantino',
+    photo: require('./photos/lucas.jpg'),
   },
   {
-    name: 'Kariny Melo Candido',
-    url: 'https://www.facebook.com/kariny.candido',
-    photo:
-      'https://scontent.ffln1-1.fna.fbcdn.net/v/t1.0-1/p240x240/21687972_1683208655043635_3782995550842626819_n.jpg?_nc_cat=0&oh=9a0cdb167063cc0af34904f802e155fd&oe=5C08BB57',
+    name: 'Luis Fernando Silva',
+    url: 'https://www.facebook.com/luisfernando.silva.313',
+    photo: require('./photos/luis.jpg'),
   },
   {
-    name: 'Kariny Melo Candido',
-    url: 'https://www.facebook.com/kariny.candido',
-    photo:
-      'https://scontent.ffln1-1.fna.fbcdn.net/v/t1.0-1/p240x240/21687972_1683208655043635_3782995550842626819_n.jpg?_nc_cat=0&oh=9a0cdb167063cc0af34904f802e155fd&oe=5C08BB57',
+    name: 'Marco Antônio',
+    url: 'https://www.facebook.com/beltramini.marcoantonio',
+    photo: require('./photos/marco antonio.jpg'),
+  },
+  {
+    name: 'Maria Salete Willemann',
+    url: 'https://www.facebook.com/mariasalete.willemann',
+    photo: require('./photos/maria salete.jpg'),
+  },
+  {
+    name: 'Paulo Salbego',
+    url: 'https://www.facebook.com/PauloBuenos',
+    photo: require('./photos/paulo.jpg'),
+  },
+  {
+    name: 'Sabrina Simas',
+    url: 'https://www.facebook.com/sabrina.simas',
+    photo: require('./photos/sabrina.jpg'),
   },
 ]
