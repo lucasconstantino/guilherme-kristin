@@ -6,20 +6,20 @@
     "holen": "^2.0.1",
     "js-sha256": "^0.9.0",
     "moment": "^2.22.2",
-    "patch-package": "^5.1.1",
+    "patch-package": "^6.1.2",
     "react": "^16.4.2",
     "react-adopt": "^0.6.0",
-    "react-dates": "^17.1.1",
+    "react-dates": "^20.1.0",
     "react-dom": "^16.4.2",
     "react-focus-lock": "^1.11.2",
     "react-key-handler": "^1.1.0",
     "react-powerplug": "^1.0.0-rc.1",
-    "react-preload": "^0.5.1",
+    "react-preload": "^0.6.0",
     "react-reveal": "^1.2.2",
-    "react-scripts": "1.1.4",
-    "react-transition-group": "^2.4.0",
-    "styled-components": "^3.4.0",
-    "styled-transition-group": "^1.0.0"
+    "react-scripts": "2.1.8",
+    "react-transition-group": "^3.0.0",
+    "styled-components": "^4.2.0",
+    "styled-transition-group": "^2.0.0"
   },
   "scripts": {
     "start": "react-scripts start",
@@ -31,7 +31,7 @@
   },
   "devDependencies": {
     "eslint-config-taller": "^2.0.0",
-    "postinstall-postinstall": "^1.0.0",
+    "postinstall-postinstall": "^2.0.0",
     "surge": "^0.20.1"
   }
 }
